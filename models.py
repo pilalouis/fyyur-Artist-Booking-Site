@@ -33,7 +33,8 @@ class Venue(db.Model):
     genres = db.Column(ARRAY(String))
     shows = db.relationship('Show', backref='Venue', lazy=True)
 
-    def __init__(self, name, genres, city, state, address, phone, image_link, facebook_link, description = "", seeking_talent= False, website ):
+    def __init__(self, name, genres, address, city, state, phone, website, facebook_link, image_link,
+                 seeking_talent=False, seeking_description=""):
         self.name = name
         self.genres = genres
         self.city = city
@@ -55,38 +56,37 @@ class Venue(db.Model):
     def delete(self):
         db.session.delete(self)
         db.session.commit()
-
-    
+  
     def short(self):
-        print(self)
         return{
-            'id' = self.id,
-            'name' = self.name
+            'id':self.id,
+            'name':self.name,
         }
     
     def long(self):
         print(self)
         return{
-            'id' = self.id,
-            'name' = self.name,
-            'city' = self.city,
-            'state' = self.state
+            'id' :self.id,
+            'name' :self.name,
+            'city' : self.city,
+            'state' :self.state,
         }
     
     def detail(self):
         return{
-            'id' = self.id,
-            'name' = self.name,
-            'genres' = self.genres,
-            'address' = self.address,
-            'city' = self.city,
-            'phone' = self.phone,
-            'website' = self.website,
-            'facebook_link'= self.facebook_link,
-            'seeking_talent' = self.seeking_talent,
-            'description' = self.description,
-            'image-link' = self.image_link
+            'id' :self.id,
+            'name' :self.name,
+            'genres' : self.genres,
+            'address' :self.address,
+            'city' :self.city,
+            'phone' :self.phone,
+            'website' :self.website,
+            'facebook_link':self.facebook_link,
+            'seeking_talent' :self.seeking_talent,
+            'description' :self.description,
+            'image-link' :self.image_link
         }
+        
 
 
         
@@ -132,30 +132,30 @@ class Show(db.Model):
 
     def detail(self):
         return{
-            'venue_id' = self.venue_id,
-            'venue_name' = self.Venue.name,
-            'artist_id' = self.artist_id,
-            'artist_name' = self.Artist.name,
-            'artist_image_link' = self.Artist.image_link,
-            'start_time' = self.start_time
+            'venue_id' :self.venue_id,
+            'venue_name' :self.Venue.name,
+            'artist_id' :self.artist_id,
+            'artist_name' :self.Artist.name,
+            'artist_image_link' :self.Artist.image_link,
+            'start_time' :self.start_time
         }
 
     def artist_details(self):
         return{
-            'artist_id' = self.venue_id,
-            'artist_name' = self.Artist.name,
-            'artist_image_link' = self.Artist.image_link,
-            'start_time' = self.start_time
+            'artist_id' :self.venue_id,
+            'artist_name' :self.Artist.name,
+            'artist_image_link' :self.Artist.image_link,
+            'start_time' :self.start_time
 
         }
  
     
     def venue_details(self):
         return{
-            'venue_id' = self.venue_id,
-            'venue_name' = self.Venue.name,
-            'venue_image_link' = self.Venue.image_link,
-            'start_time' = self.start_time
+            'venue_id' :self.venue_id,
+            'venue_name' :self.Venue.name,
+            'venue_image_link' :self.Venue.image_link,
+            'start_time' :self.start_time
             
         }
 
