@@ -13,15 +13,16 @@ from logging import Formatter, FileHandler
 from flask_wtf import Form
 from forms import *
 from models import db_setup, Venue, Show, Artist
+from sqlalchemy import func
+from sqlalchemy.exc import SQLAlchemyError
+from sqlalchemy.orm import aliased
 #----------------------------------------------------------------------------#
 # App Config.
 #----------------------------------------------------------------------------#
 
 app = Flask(__name__)
 moment = Moment(app)
-app.config.from_object('config')
-db = SQLAlchemy(app)
-app.config['SQLALCHEMY_DATABASE_URI'] = 'postgres://pilalouis@localhost:5432/fyyur'
+db = db_setup(app)
 
 
 

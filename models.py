@@ -105,7 +105,7 @@ class Artist(db.Model):
     genres = db.Column(db.String(120))
     image_link = db.Column(db.String(500))
     facebook_link = db.Column(db.String(120))
-    shows = db.relationship(Show, backref='Artist', lazy='dynamics')
+    shows = db.relationship('Show', backref='Artist', lazy='dynamics')
 
     # TODO: implement any missing fields, as a database migration using Flask-Migrate
 
@@ -115,7 +115,7 @@ class Artist(db.Model):
 class Show(db.Model):
 
     __tablename__ = 'Show'
-    id = db.Column(Integer,promary_key=True)
+    id = db.Column(Integer,primary_key=True)
     venue_id = db.Column(Integer, ForeignKey(Venue.id), nullable=False)
     artist_id = db.Column(Integer, ForeignKey(Artist.id), nullable=False)
     start_time = db.Column(String(), nullable=False)
