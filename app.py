@@ -213,8 +213,23 @@ def show_venue(venue_id):
   #   "past_shows_count": 1,
   #   "upcoming_shows_count": 1,
   # }
-  data = list(filter(lambda d: d['id'] == venue_id, [data1, data2, data3]))[0]
-  return render_template('pages/show_venue.html', venue=data)
+
+  venue_query = Venue.query.get(venue_id)
+  if venue_query:
+    venue_details = Venue.details(venue_query)
+    current_time = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+    new_shows_query = Show.query.options(db.joinedload(Show.Venue)).filter(Show.venue_id == venue_id).filter(Show.start_time > current_time).all()
+    new_show = list(map(Show.artist_details, new_shows_query))
+    venue_details["upcoming_shows"] = new_show
+    venue_details["upcoming_shows_count"] = len(new_show)
+    past_shows_query = Show.query.options(db.joinedload(Show.Venue)).filter(Show.venue_id == venue_id).filter(Show.start_time <= current_time).all()
+    past_shows = list(map(Show.artist_details, past_shows_query))
+    venue_details["past_shows"] = past_shows
+    venue_details["past_shows_count"] = len(past_shows)
+
+    # data = list(filter(lambda d: d['id'] == venue_id, [data1, data2, data3]))[0]
+    return render_template('pages/show_venue.html', venue=venue_details)
+  return render_template('errors/404.html')
 
 #  Create Venue
 #  ----------------------------------------------------------------
