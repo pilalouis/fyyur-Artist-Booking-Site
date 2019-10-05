@@ -263,7 +263,7 @@ def create_venue_submission():
         facebook_link=request.form['facebook_link'],
         image_link=request.form['image_link'],
         seeking_talent=seeking_talent,
-        seeking_description=seeking_description,
+        description=seeking_description,
       )
       #insert new venue records into the db
       Venue.insert(new_venue)
@@ -280,6 +280,13 @@ def create_venue_submission():
 def delete_venue(venue_id):
   # TODO: Complete this endpoint for taking a venue_id, and using
   # SQLAlchemy ORM to delete a record. Handle cases where the session commit could fail.
+  try:
+    Venue.query.filter_by(id=venue_id).delete()
+    db.session.commit()
+  except:
+    db.session.rollback() 
+  finally:
+    db.session.close()
 
   # BONUS CHALLENGE: Implement a button to delete a Venue on a Venue Page, have it so that
   # clicking that button delete it from the db then redirect the user to the homepage
