@@ -470,8 +470,31 @@ def edit_artist(artist_id):
 def edit_artist_submission(artist_id):
   # TODO: take values from the form submitted, and update existing
   # artist record with ID <artist_id> using the new attributes
-
-  return redirect(url_for('show_artist', artist_id=artist_id))
+    form = ArtistForm(request.form)
+    artist_data = Artist.query.get(artist_id)
+    if artist_data:
+        if form.validate():
+            seeking_venue = False
+            seeking_description = ''
+            if 'seeking_venue' in request.form:
+                seeking_venue = request.form['seeking_venue'] == 'y'
+            if 'seeking_description' in request.form:
+                seeking_description = request.form['seeking_description']
+            setattr(artist_data, 'name', request.form['name'])
+            setattr(artist_data, 'genres', request.form.getlist('genres'))
+            setattr(artist_data, 'city', request.form['city'])
+            setattr(artist_data, 'state', request.form['state'])
+            setattr(artist_data, 'phone', request.form['phone'])
+            setattr(artist_data, 'website', request.form['website'])
+            setattr(artist_data, 'facebook_link', request.form['facebook_link'])
+            setattr(artist_data, 'image_link', request.form['image_link'])
+            setattr(artist_data, 'seeking_description', seeking_description)
+            setattr(artist_data, 'seeking_venue', seeking_venue)
+            Artist.update(artist_data)
+            return redirect(url_for('show_artist', artist_id=artist_id))
+        else:
+            print(form.errors)
+    return render_template('errors/404.html'), 404
 
 @app.route('/venues/<int:venue_id>/edit', methods=['GET'])
 def edit_venue(venue_id):
