@@ -536,7 +536,32 @@ def edit_venue(venue_id):
 def edit_venue_submission(venue_id):
   # TODO: take values from the form submitted, and update existing
   # venue record with ID <venue_id> using the new attributes
-  return redirect(url_for('show_venue', venue_id=venue_id))
+  form = VenueForm(request.form)
+  venue_data = Venue.query.get(venue_id)
+  if venue_data:
+      if form.validate():
+          seeking_talent = False
+          seeking_description = ''
+          if 'seeking_talent' in request.form:
+              seeking_talent = request.form['seeking_talent'] == 'y'
+          if 'seeking_description' in request.form:
+              seeking_description = request.form['seeking_description']
+          setattr(venue_data, 'name', request.form['name'])
+          setattr(venue_data, 'genres', request.form.getlist('genres'))
+          setattr(venue_data, 'address', request.form['address'])
+          setattr(venue_data, 'city', request.form['city'])
+          setattr(venue_data, 'state', request.form['state'])
+          setattr(venue_data, 'phone', request.form['phone'])
+          setattr(venue_data, 'website', request.form['website'])
+          setattr(venue_data, 'facebook_link', request.form['facebook_link'])
+          setattr(venue_data, 'image_link', request.form['image_link'])
+          setattr(venue_data, 'seeking_description', seeking_description)
+          setattr(venue_data, 'seeking_talent', seeking_talent)
+          Venue.update(venue_data)
+          return redirect(url_for('show_venue', venue_id=venue_id))
+      else:
+          print(form.errors)
+  return render_template('errors/404.html'), 404
 
 #  Create Artist
 #  ----------------------------------------------------------------
