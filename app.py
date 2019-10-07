@@ -307,6 +307,8 @@ def artists():
   #   "id": 6,
   #   "name": "The Wild Sax Band",
   # }]
+
+  #query all artists in the database
   artist_query = Artist.query.all()
   data = list(map(Artist.short, artist_query))
   return render_template('pages/artists.html', artists=data)
@@ -407,30 +409,62 @@ def show_artist(artist_id):
   #   "past_shows_count": 0,
   #   "upcoming_shows_count": 3,
   # }
-  
-  data = list(filter(lambda d: d['id'] == artist_id, [data1, data2, data3]))[0]
-  return render_template('pages/show_artist.html', artist=data)
+  artist_query = Artist.query.get(artist_id)
+  if artist_query:
+    artist_details = Artist.details(artist_query)
+    #get the current system time
+    current_time = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+    new_shows_query = Show.query.options(db.joinedload(Show.Artist)).filter(Show.artist_id == artist_id).filter(Show.start_time > current_time).all()
+    new_shows_list = list(map(Show.venue_details, new_shows_query))
+    artist_details["upcoming_shows"] = new_shows_list
+    artist_details["upcoming_shows_count"] = len(new_shows_list)
+    past_shows_query = Show.query.options(db.joinedload(Show.Artist)).filter(Show.artist_id == artist_id).filter(Show.start_time <= current_time).all()
+    past_shows_list = list(map(Show.venue_details, past_shows_query))
+    artist_details["past_shows"] = past_shows_list
+    artist_details["past_shows_count"] = len(past_shows_list)
+    return render_template('pages/show_artist.html', artist=artist_details)
+  return render_template('errors/404.html')
+
+
 
 #  Update
 #  ----------------------------------------------------------------
 @app.route('/artists/<int:artist_id>/edit', methods=['GET'])
 def edit_artist(artist_id):
-  form = ArtistForm()
-  artist={
-    "id": 4,
-    "name": "Guns N Petals",
-    "genres": ["Rock n Roll"],
-    "city": "San Francisco",
-    "state": "CA",
-    "phone": "326-123-5000",
-    "website": "https://www.gunsnpetalsband.com",
-    "facebook_link": "https://www.facebook.com/GunsNPetals",
-    "seeking_venue": True,
-    "seeking_description": "Looking for shows to perform at in the San Francisco Bay Area!",
-    "image_link": "https://images.unsplash.com/photo-1549213783-8284d0336c4f?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=300&q=80"
-  }
+  form = ArtistForm(request.form)
+  artist_data = Artist.query.get(artist_id)
+  if artist_data:
+    artist_details = Artist.details(artist_data)
+    form.name.data = artist_details["name"]
+    form.genres.data = artist_details["genres"]
+    form.city.data = artist_details["city"]
+    form.state.data = artist_details["state"]
+    form.phone.data = artist_details["phone"]
+    form.website.data = artist_details["website"]
+    form.facebook_link.data = artist_details["facebook_link"]
+    form.seeking_venue.data = artist_details["seeking_venue"]
+    form.seeking_description.data = artist_details["seeking_description"]
+    form.image_link.data = artist_details["image_link"]
+    return render_template('forms/edit_artist.html', form=form, artist=artist_details)
+  return render_template('errors/404.html')
+    
+
+
+  # artist={
+  #   "id": 4,
+  #   "name": "Guns N Petals",
+  #   "genres": ["Rock n Roll"],
+  #   "city": "San Francisco",
+  #   "state": "CA",
+  #   "phone": "326-123-5000",
+  #   "website": "https://www.gunsnpetalsband.com",
+  #   "facebook_link": "https://www.facebook.com/GunsNPetals",
+  #   "seeking_venue": True,
+  #   "seeking_description": "Looking for shows to perform at in the San Francisco Bay Area!",
+  #   "image_link": "https://images.unsplash.com/photo-1549213783-8284d0336c4f?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=300&q=80"
+  # }
   # TODO: populate form with fields from artist with ID <artist_id>
-  return render_template('forms/edit_artist.html', form=form, artist=artist)
+  #return render_template('forms/edit_artist.html', form=form, artist=artist)
 
 @app.route('/artists/<int:artist_id>/edit', methods=['POST'])
 def edit_artist_submission(artist_id):
