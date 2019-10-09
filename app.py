@@ -247,12 +247,12 @@ def create_venue_submission():
   # form = VenueForm(request.form)
   # if form.validate():
   try:
-    seeking_talent = False
-    seeking_description = ''
-    if 'seeking_talent' in request.form:
-      seeking_talent = request.form['seeking_talent'] == 'y'
-    if 'seeking_description' in request.form:
-      seeking_description = request.form['seeking_description']
+    # seeking_talent = False
+    # seeking_description = ''
+    # if 'seeking_talent' in request.form:
+    #   seeking_talent = request.form['seeking_talent'] == 'y'
+    # if 'seeking_description' in request.form:
+    #   seeking_description = request.form['seeking_description']
     new_venue = Venue(
       name=request.form['name'],
       genres=request.form.getlist('genres'),
@@ -263,8 +263,8 @@ def create_venue_submission():
       website=request.form['website'],
       facebook_link=request.form['facebook_link'],
       image_link=request.form['image_link'],
-      seeking_talent=seeking_talent,
-      description=seeking_description,
+      seeking_talent=request.form['seeking_talent'],
+      description=request.form['seeking_description'],
     )
     #insert new venue records into the db
     Venue.insert(new_venue)
