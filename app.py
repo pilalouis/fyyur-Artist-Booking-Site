@@ -310,8 +310,8 @@ def artists():
 
   #query all artists in the database
   artist_query = Artist.query.all()
-  data = list(map(Artist.short, artist_query))
-  return render_template('pages/artists.html', artists=data)
+  #data = list(map(Artist.short, artist_query))
+  return render_template('pages/artists.html', artists=artist_query)
 
 @app.route('/artists/search', methods=['POST'])
 def search_artists():
