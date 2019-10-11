@@ -31,7 +31,7 @@ class Venue(db.Model):
     seeking_talent = db.Column(Boolean, default=False)
     website = db.Column(String(120))
     genres = db.Column(ARRAY(String))
-    shows = db.relationship('Show', backref='Venue', lazy=True)
+    shows = db.relationship('Show', backref='Venue', lazy='dynamic')
 
     def __init__(self, name, genres, address, city, state, phone, website, facebook_link, image_link,
                  seeking_talent=False, description=""):
@@ -96,6 +96,7 @@ class Venue(db.Model):
 
 class Artist(db.Model):
     __tablename__ = 'Artist'
+    
 
     id = Column(Integer, primary_key=True)
     name = db.Column(db.String)

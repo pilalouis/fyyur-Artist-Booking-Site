@@ -87,6 +87,7 @@ def venues():
   #loop through venues to check for upcoming shows, city, states and venue information
   for venue in venues:
     #filter upcoming shows given that the show start time is greater than the current time
+    print(venue)
     upcoming_shows = venue.shows.filter(Show.start_time > current_time).all()
     if venue_state_and_city == venue.city + venue.state:
       data[len(data) - 1]["venues"].append({
@@ -216,7 +217,7 @@ def show_venue(venue_id):
 
   venue_query = Venue.query.get(venue_id)
   if venue_query:
-    venue_details = Venue.details(venue_query)
+    venue_details = Venue.detail(venue_query)
     current_time = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
     new_shows_query = Show.query.options(db.joinedload(Show.Venue)).filter(Show.venue_id == venue_id).filter(Show.start_time > current_time).all()
     new_show = list(map(Show.artist_details, new_shows_query))
@@ -708,6 +709,7 @@ if not app.debug:
 #----------------------------------------------------------------------------#
 
 # Default port:
+
 if __name__ == '__main__':
     app.run()
 
