@@ -1,6 +1,6 @@
 alembic==1.1.0
 astroid==2.2.5
-Babel==2.7.0
+Babel==2.9.1
 Click==7.0
 Flask==1.0.3
 Flask-Cors==3.0.8
